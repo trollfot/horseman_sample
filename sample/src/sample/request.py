@@ -1,5 +1,4 @@
 import cgi
-import collections
 import typing
 import horseman.parsing
 from horseman.meta import Overhead

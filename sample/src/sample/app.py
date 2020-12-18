@@ -1,7 +1,8 @@
 import inspect
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Mapping, Optional, NamedTuple, Callable, Type
+from typing import Mapping, NamedTuple, Callable, Type
+from http import HTTPStatus
 
 import autoroutes
 import horseman.meta
@@ -63,7 +64,7 @@ class Application(horseman.meta.APINode):
             return None
         endpoint = methods.get(method)
         if endpoint is None:
-            raise HTTPError(HTTPStatus.METHOD_NOT_ALLOWED)
+            raise horseman.http.HTTPError(HTTPStatus.METHOD_NOT_ALLOWED)
         return Route(
             path=path_info,
             method=method,
