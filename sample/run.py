@@ -7,6 +7,7 @@ def start(config):
 
     app.config.update(config.app)
 
+    print('Running.')
     bjoern.run(
         app, config.server.host,
         int(config.server.port), reuse_port=True)

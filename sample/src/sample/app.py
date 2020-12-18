@@ -44,19 +44,36 @@ def route_payload(view, methods: list=None):
 class Application(horseman.meta.APINode):
 
     config: Mapping = field(default_factory=partial(DictConfig, {}))
-    routes: Routes = field(default_factory=autoroutes.Routes)
+    routes: autoroutes.Routes = field(default_factory=autoroutes.Routes)
     request_factory: Type[horseman.meta.Overhead] = Request
 
     def route(self, path: str, methods: list = None, **extras):
         def routing(view):
             for method, endpoint in route_payload(view, methods):
-                self.routes.add(path, {
+                self.routes.add(path, **{
                     method: endpoint,
                     'extras': extras
                 })
+            return view
+        return routing
+
+    def match(self, method: str, path_info: str) -> Route:
+        methods, params = self.routes.match(path_info)
+        if methods is None:
+            return None
+        endpoint = methods.get(method)
+        if endpoint is None:
+            raise HTTPError(HTTPStatus.METHOD_NOT_ALLOWED)
+        return Route(
+            path=path_info,
+            method=method,
+            endpoint=endpoint,
+            params=params,
+            extras=methods.get('extras', {})
+        )
 
     def resolve(self, path: str, environ: dict):
-        route = self.routes.match(environ['REQUEST_METHOD'], path)
+        route = self.match(environ['REQUEST_METHOD'], path)
         if route is not None:
             environ['horseman.path.params'] = route.params
             request = self.request_factory(self, environ, route)
@@ -64,4 +81,9 @@ class Application(horseman.meta.APINode):
         return None
 
 
-app = Router()
+app = Application()
+
+
+@app.route('/')
+def index(request: Request):
+    return horseman.response.Response.create(200, body='Yeah')
