@@ -1,0 +1,4 @@
+bjoern
+omegaconf
+git+https://github.com/trollfot/horseman.git#egg=horseman
+-e .
