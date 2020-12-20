@@ -1,5 +1,5 @@
 bjoern
 omegaconf
-git+https://github.com/trollfot/horseman.git#egg=horseman
-git+https://github.com/trollfot/roughrider.routing.git#egg=roughrider.routing
+-e git+https://github.com/trollfot/horseman.git#egg=horseman
+-e git+https://github.com/trollfot/roughrider.routing.git#egg=roughrider.routing
 -e .
