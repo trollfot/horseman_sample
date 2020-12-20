@@ -1,7 +1,7 @@
 import cgi
 import typing
 import horseman.parsing
-from horseman.meta import Overhead
+from roughrider.routing.components import RoutingRequest
 
 
 class ContentType(typing.NamedTuple):
@@ -10,12 +10,10 @@ class ContentType(typing.NamedTuple):
     options: dict
 
 
-class Request(Overhead):
+class Request(RoutingRequest):
 
     __slots__ = (
         '_data'
-        '_db',
-        '_extracted',
         'app',
         'content_type',
         'environ',
@@ -24,9 +22,7 @@ class Request(Overhead):
     )
 
     def __init__(self, app, environ, route):
-        self._data = {}
-        self._db = None
-        self._extracted = False
+        self._data = ...
         self.app = app
         self.environ = environ
         self.method = environ['REQUEST_METHOD'].upper()
@@ -44,10 +40,9 @@ class Request(Overhead):
         return self._data
 
     def extract(self):
-        if self._extracted:
+        if self._data is not ...:
             return self.get_data()
 
-        self._extracted = True
         if content_type := self.content_type:
             self.set_data(horseman.parsing.parse(
                 self.environ['wsgi.input'], content_type.raw))
