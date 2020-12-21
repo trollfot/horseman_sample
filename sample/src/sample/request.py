@@ -1,6 +1,7 @@
 import cgi
 import typing
 import horseman.parsing
+from horseman.http import Query, Cookies
 from roughrider.routing.components import RoutingRequest
 
 
@@ -15,6 +16,8 @@ class Request(RoutingRequest):
     __slots__ = (
         '_data'
         'app',
+        'cookies',
+        'query',
         'content_type',
         'environ',
         'method',
@@ -27,6 +30,8 @@ class Request(RoutingRequest):
         self.environ = environ
         self.method = environ['REQUEST_METHOD'].upper()
         self.route = route
+        self.query = Query.from_environ(environ)
+        self.cookies = Cookies.from_environ(environ)
         if 'CONTENT_TYPE' in self.environ:
             ct = self.environ['CONTENT_TYPE']
             self.content_type = ContentType(ct, *cgi.parse_header(ct))
