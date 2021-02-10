@@ -20,7 +20,7 @@ class Application(RoutingNode):
     request_factory: Type[horseman.meta.Overhead] = Request
 
     def resolve(self, path: str, environ: dict):
-        route = self.routes.match(environ['REQUEST_METHOD'], path)
+        route = self.routes.match_method(path, environ['REQUEST_METHOD'])
         if route is not None:
             environ['horseman.path.params'] = route.params
             request = self.request_factory(self, environ, route)
